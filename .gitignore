@@ -3,3 +3,5 @@ dist/
 build/
 .cache/
 .parcel-cache/
+.DS_STORE
+*.log
