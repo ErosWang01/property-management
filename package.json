@@ -1,0 +1,45 @@
+{
+  "name": "property-management",
+  "version": "1.0.0",
+  "description": "Property management",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "format": "prettier --write ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ErosWang01"
+  },
+  "author": "Eros Wang",
+  "license": "ISC",
+  "dependencies": {
+    "@tanstack/react-router": "^1.133.27",
+    "@tanstack/react-router-devtools": "^1.133.27",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.38.0",
+    "@tanstack/router-plugin": "^1.133.27",
+    "@types/node": "^24.9.1",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@typescript-eslint/eslint-plugin": "^8.46.2",
+    "@typescript-eslint/parser": "^8.46.2",
+    "@vitejs/plugin-react": "^5.1.0",
+    "eslint": "^9.38.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "globals": "^16.4.0",
+    "prettier": "3.6.2",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.12"
+  }
+}
