@@ -1,7 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form';
 import { Box, MenuItem, TextField } from '@mui/material';
 
-// 频率选项（年/月/双周）
 export const FREQUENCIES = [
   { value: 'annually', label: 'Annually' },
   { value: 'monthly', label: 'Monthly' },
@@ -29,11 +28,12 @@ export default function FrequencyOptions({
 
   return (
     <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 180px', gap: 2 }}>
-      {/* 金额：非受控注册 + 数字输入 */}
       <TextField
-        label={`${label} amount`}
+        label={`${label}`}
         type="number"
-        inputProps={{ step: '0.01', min: 0 }}
+        slotProps={{
+          htmlInput: { step: '0.01', min: 0 },
+        }}
         error={Boolean(errors?.[amountName as keyof typeof errors])}
         helperText={((errors as any)?.[amountName]?.message as string) || ''}
         {...register(amountName as any, { required })}

@@ -15,22 +15,25 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
 import FrequencyOptions from './FrequencyOptions';
+import { calculatePropertyBalance } from '@/helper/propertyBalance';
+import { calculateAfterTaxIncome } from '@/helper/taxCalculator';
+import SummaryDrawer from './SummaryDrawer';
 
 type Frequency = 'annually' | 'monthly' | 'fortnightly';
 
 type Property = {
-  rentalIncome: number | '';
-  managementFeePct: number | '';
-  estimateExpense: number | '';
-  depreciation: number | '';
-  rate: number | '';
-  landTax: number | '';
-  insurance: { amount: number | ''; frequency: Frequency };
-  interest: { amount: number | ''; frequency: Frequency };
+  rentalIncome: { amount: ''; frequency: Frequency };
+  managementFeePct: '';
+  estimateExpense: '';
+  depreciation: '';
+  rate: '';
+  landTax: '';
+  insurance: { amount: ''; frequency: Frequency };
+  interest: { amount: ''; frequency: Frequency };
 };
 
-type FormValues = {
-  taxableIncome: number | '';
+export type FormValues = {
+  taxableIncome: '';
   properties: Property[];
 };
 
@@ -38,10 +41,9 @@ export default function PropertyInputsForm() {
   const methods = useForm<FormValues>({
     defaultValues: {
       taxableIncome: '',
-      // 先给一组，用户可继续点“+”新增
       properties: [
         {
-          rentalIncome: '',
+          rentalIncome: { amount: '', frequency: 'annually' },
           managementFeePct: '',
           estimateExpense: '',
           depreciation: '',
@@ -62,13 +64,28 @@ export default function PropertyInputsForm() {
     name: 'properties',
   });
 
+  const [openDrawer, setOpenDrawer] = React.useState(false);
+  const [taxableIncome, setTaxableIncome] = React.useState(0);
+  const [grossIncome, setGrossIncome] = React.useState(0);
+  const [summary, setSummary] = React.useState<ReturnType<
+    typeof calculatePropertyBalance
+  > | null>(null);
+  console.log('🚀 ~ PropertyInputsForm ~ summary:', summary);
+
   const onSubmit = (data: FormValues) => {
-    console.log('Form data:', data);
-    alert(JSON.stringify(data, null, 2));
+    const propertyBalance = calculatePropertyBalance(data);
+    const taxableIncome =
+      Number(data.taxableIncome) + propertyBalance.overall.netIncome;
+    const grossIncome = calculateAfterTaxIncome(taxableIncome);
+    setGrossIncome(grossIncome);
+    setTaxableIncome(taxableIncome);
+    setSummary(propertyBalance);
+
+    setOpenDrawer(true);
   };
 
   const emptyProperty: Property = {
-    rentalIncome: '',
+    rentalIncome: { amount: '', frequency: 'annually' },
     managementFeePct: '',
     estimateExpense: '',
     depreciation: '',
@@ -85,18 +102,18 @@ export default function PropertyInputsForm() {
         onSubmit={handleSubmit(onSubmit)}
         sx={{ p: 3, maxWidth: 900 }}
       >
-        {/* 顶部：总应税收入 */}
         <Stack spacing={2} sx={{ mb: 3 }}>
           <Typography variant="h5">Total Taxable Income</Typography>
           <TextField
             label="Taxable Income"
             type="number"
-            inputProps={{ step: '0.01', min: 0 }}
+            slotProps={{
+              htmlInput: { step: '0.01', min: 0 },
+            }}
             {...register('taxableIncome')}
           />
         </Stack>
 
-        {/* 多个 Investment Property 分组 */}
         <Stack
           direction="row"
           alignItems="center"
@@ -133,36 +150,31 @@ export default function PropertyInputsForm() {
               </Stack>
 
               <Stack spacing={2}>
-                <TextField
-                  label="Rental income"
-                  type="number"
-                  inputProps={{ step: '0.01', min: 0 }}
-                  {...register(`properties.${index}.rentalIncome` as const)}
+                <FrequencyOptions
+                  label="Rental Income"
+                  amountName={`properties.${index}.rentalIncome.amount`}
+                  freqName={`properties.${index}.rentalIncome.frequency`}
                 />
+                <Divider />
                 <TextField
-                  label="Management fee %"
+                  label="Management Fee %"
                   type="number"
-                  inputProps={{ step: '0.01', min: 0, max: 100 }}
+                  slotProps={{
+                    htmlInput: { step: '0.01', min: 0, max: 100 },
+                  }}
                   {...register(`properties.${index}.managementFeePct` as const)}
                 />
                 <TextField
-                  label="Estimate expense"
+                  label="Estimate Expense"
                   type="number"
-                  inputProps={{ step: '0.01', min: 0 }}
+                  slotProps={{
+                    htmlInput: { step: '0.01', min: 0 },
+                  }}
                   {...register(`properties.${index}.estimateExpense` as const)}
                 />
-                <TextField
-                  label="折旧 (Depreciation)"
-                  type="number"
-                  inputProps={{ step: '0.01', min: 0 }}
-                  {...register(`properties.${index}.depreciation` as const)}
-                />
 
-                <Divider />
-
-                {/* 金额 + 频率组合：复用你的 FrequencyOptions */}
                 <FrequencyOptions
-                  label="Interest to be paid"
+                  label="Interest"
                   amountName={`properties.${index}.interest.amount`}
                   freqName={`properties.${index}.interest.frequency`}
                 />
@@ -171,20 +183,32 @@ export default function PropertyInputsForm() {
                   amountName={`properties.${index}.insurance.amount`}
                   freqName={`properties.${index}.insurance.frequency`}
                 />
+                <TextField
+                  label="Council Rates"
+                  type="number"
+                  slotProps={{
+                    htmlInput: { step: '0.01', min: 0 },
+                  }}
+                  {...register(`properties.${index}.rate` as const)}
+                />
+                <TextField
+                  label="Land Tax"
+                  type="number"
+                  slotProps={{
+                    htmlInput: { step: '0.01', min: 0 },
+                  }}
+                  {...register(`properties.${index}.landTax` as const)}
+                />
 
                 <Divider />
 
                 <TextField
-                  label="Rate (council rates)"
+                  label="Depreciation"
                   type="number"
-                  inputProps={{ step: '0.01', min: 0 }}
-                  {...register(`properties.${index}.rate` as const)}
-                />
-                <TextField
-                  label="Land tax"
-                  type="number"
-                  inputProps={{ step: '0.01', min: 0 }}
-                  {...register(`properties.${index}.landTax` as const)}
+                  slotProps={{
+                    htmlInput: { step: '0.01', min: 0 },
+                  }}
+                  {...register(`properties.${index}.depreciation` as const)}
                 />
               </Stack>
             </Paper>
@@ -200,6 +224,14 @@ export default function PropertyInputsForm() {
           </Button>
         </Stack>
       </Box>
+
+      <SummaryDrawer
+        summary={summary}
+        openDrawer={openDrawer}
+        taxableIncome={taxableIncome}
+        grossIncome={grossIncome}
+        onClose={() => setOpenDrawer(false)}
+      />
     </FormProvider>
   );
 }
