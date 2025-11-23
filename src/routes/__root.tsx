@@ -20,7 +20,7 @@ import AdbIcon from '@mui/icons-material/Adb';
 
 const NAV_ITEMS = [
   { label: 'Home', to: '/' },
-  { label: 'About', to: '/about' },
+  { label: 'Calculator', to: '/calculator' },
 ];
 
 export default function ResponsiveAppBar() {
