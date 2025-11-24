@@ -8,7 +8,7 @@ import { routeTree } from './routeTree.gen';
 import { theme } from './theme/theme';
 
 // Create a new router instance
-const router = createRouter({ routeTree });
+const router = createRouter({ routeTree, basepath: '/property-management' });
 
 // Register the router instance for type safety
 declare module '@tanstack/react-router' {
