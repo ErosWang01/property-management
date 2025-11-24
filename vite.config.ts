@@ -4,6 +4,7 @@ import { fileURLToPath, URL } from 'node:url';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 
 export default defineConfig({
+  base: '/property-management/',
   plugins: [
     tanstackRouter({
       target: 'react',
