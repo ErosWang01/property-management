@@ -1,6 +1,6 @@
 # 文件名: .github/workflows/ci-cd.yml
 
-name: Vite React CI/CD Pipeline
+name: on push to main
 
 # 1. 触发事件
 # 在代码推送到 main 分支 或 提交针对 main 分支的 Pull Request 时运行
