@@ -24,6 +24,7 @@ export const TextField: React.FC<TextFieldProps> = ({
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value);
   };
+  console.log('123');
 
   return (
     <MuiTextField
